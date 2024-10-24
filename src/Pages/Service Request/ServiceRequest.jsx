@@ -1,6 +1,11 @@
 import { DatePicker, TimePicker } from "antd";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  GoogleMap,
+  useJsApiLoader,
+  StandaloneSearchBox,
+} from "@react-google-maps/api";
 
 const ServiceRequest = () => {
   const [luxuryservice, setLuxuryService] = useState("Luxury Service1");
@@ -12,12 +17,19 @@ const ServiceRequest = () => {
   const [timeOfTrip, setTimeOfTrip] = useState();
   const [description, setDescription] = useState();
 
+  const originRef = useRef(null);
+  const destinationRef = useRef(null);
+  const { isLoaded } = useJsApiLoader({
+    id: "google-map-script",
+    googleMapsApiKey: process.env.REACT_APP_GOOGLEMAPS_API_KEY,
+    libraries: ["places"],
+  });
+  console.log("Google Auto Compelete is Working ?! :", isLoaded);
+  console.log("API-Key:", process.env.REACT_APP_GOOGLEMAPS_API_KEY);
   const firstName = localStorage.getItem("firstName");
   const lastName = localStorage.getItem("lastName");
   const email = localStorage.getItem("email");
   const phoneNumber = localStorage.getItem("phoneNumber");
-
-  const navigate = useNavigate();
 
   const handleServiceRequset = async (e) => {
     e.preventDefault();
@@ -57,6 +69,14 @@ const ServiceRequest = () => {
     }
     // navigate("dashboard/passenger/successful-request", { replace: true });
     window.location.replace("successful-request");
+  };
+  const handleOriginOnPlacesChanged = () => {
+    let originAddress = originRef.current.getPlaces();
+    console.log("originAddress", originAddress);
+  };
+  const handleDestinationOnPlacesChanged = () => {
+    let destinationAddress = destinationRef.current.getPlaces();
+    console.log("destinationAddress", destinationAddress);
   };
   return (
     <div>
@@ -125,35 +145,61 @@ const ServiceRequest = () => {
           </h2>
           <div class="bg-white p-10 rounded-lg shadow md:w-3/4 mx-auto lg:w-1/2">
             <form action="">
-              <div class="mb-2">
-                <label for="origin" class="block mb-2 font-bold text-gray-600">
-                  Origin
-                </label>
-                <input
-                  type="text"
-                  id="origin"
-                  name="origin"
-                  placeholder="Put in your Origin."
-                  class="border border-gray-300 shadow p-3 w-full rounded mb-1"
-                  onChange={(e) => setOrigin(e.target.value)}
-                />
-              </div>
-              <div class="mb-2">
-                <label
-                  for="destination"
-                  class="block mb-2 font-bold text-gray-600"
-                >
-                  Destination
-                </label>
-                <input
-                  type="text"
-                  id="destination"
-                  name="destination"
-                  placeholder="Put in your Destination."
-                  class="border border-gray-300 shadow p-3 w-full rounded mb-1"
-                  onChange={(e) => setDestination(e.target.value)}
-                />
-              </div>
+              {isLoaded ? (
+                <div class="mb-2">
+                  <label
+                    for="origin"
+                    class="block mb-2 font-bold text-gray-600"
+                  >
+                    Origin
+                  </label>
+                  <StandaloneSearchBox
+                    onLoad={(ref) => (originRef.current = ref)}
+                    onPlacesChanged={handleOriginOnPlacesChanged}
+                  >
+                    <input
+                      type="text"
+                      id="origin"
+                      name="origin"
+                      placeholder="Put in your Origin."
+                      class="border border-gray-300 shadow p-3 w-full rounded mb-1"
+                      onChange={(e) => setOrigin(e.target.value)}
+                    />
+                  </StandaloneSearchBox>
+                </div>
+              ) : (
+                <h1 className="text-red-500">
+                  Google Web Service doesn't work !! call support
+                </h1>
+              )}
+              {isLoaded ? (
+                <div class="mb-2">
+                  <label
+                    for="destination"
+                    class="block mb-2 font-bold text-gray-600"
+                  >
+                    Destination
+                  </label>
+                  <StandaloneSearchBox
+                    onLoad={(ref) => (destinationRef.current = ref)}
+                    onPlacesChanged={handleDestinationOnPlacesChanged}
+                  >
+                    <input
+                      type="text"
+                      id="destination"
+                      name="destination"
+                      placeholder="Put in your Destination."
+                      class="border border-gray-300 shadow p-3 w-full rounded mb-1"
+                      onChange={(e) => setDestination(e.target.value)}
+                    />
+                  </StandaloneSearchBox>
+                </div>
+              ) : (
+                <h1 className="text-red-500">
+                  Google Web Service doesn't work !! call support
+                </h1>
+              )}
+
               <div class="mb-2">
                 <label for="date" class="block mb-2 font-bold text-gray-600">
                   Date
