@@ -19,9 +19,136 @@ const Login = () => {
   const navigate = useNavigate();
 
   localStorage.clear();
+  // const handleLogin = async (e) => {
+  //   setNotSameError("Your password and its repeat are the same !!")
+  //   e.preventDefault();
+  //   try {
+  //     const response = await fetch(
+  //       "https://dignitylimo.com/users/requests.php",
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/x-www-form-urlencoded",
+  //         },
+  //         body: isRegistered
+  //           ? new URLSearchParams({
+  //               action: "login",
+  //               role: role,
+  //               email: phoneNumberOrEmail,
+  //               password: password,
+  //             })
+  //           : new URLSearchParams({
+  //               action: "user_new",
+  //               first_name: firstName,
+  //               last_name: lastName,
+  //               phone_number: phoneNumber,
+  //               email: email,
+  //               password: registerPassword,
+  //             }),
+  //       }
+  //     );
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! status: ${response.status}`);
+  //     }
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       if (data) {
+  //         console.log("ok")
+  //         console.log(data)
+  //         localStorage.setItem("id", data.data[0].id);
+  //         localStorage.setItem("firstName", data.data[0].first_name);
+  //         localStorage.setItem("lastName", data.data[0].last_name);
+  //         localStorage.setItem("email", data.data[0].email);
+  //         localStorage.setItem("phoneNumber", data.data[0].phone_number);
+  //         localStorage.setItem("phoneNumber", data.data[0].phone_number);
+  //         localStorage.setItem("role", role);
+  //         if (data.data[0].driver_id)
+  //           localStorage.setItem("driverId", data.data[0].driver_id);
+  //         if (role === "passenger") navigate("/dashboard/passenger");
+  //         else if (role === "driver") navigate("/dashboard/driver");
+  //         else navigate("/dashboard/manager");
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.log("Error")
+  //     console.log(error)
+  //     console.log("user or password is incorrect");
+  //     setErrorMessage("Your Login data incorrect , Try again !");
+  //   }
+  // };
+  // const handleLogin = async (e) => {
+  //   e.preventDefault();
+  //   setErrorMessage(""); // Reset error message on new submission
+  //   setNotSameError(""); // Reset password mismatch message
+
+  //   if (!isRegistered && registerPassword !== reWritePassword) {
+  //     setNotSameError("Your password and its repeat do not match!");
+  //     return;
+  //   }
+
+  //   try {
+  //     const response = await fetch(
+  //       "https://dignitylimo.com/users/requests.php",
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/x-www-form-urlencoded",
+  //         },
+  //         body: isRegistered
+  //           ? new URLSearchParams({
+  //               action: "login",
+  //               role: role,
+  //               email: phoneNumberOrEmail,
+  //               password: password,
+  //             })
+  //           : new URLSearchParams({
+  //               action: "user_new",
+  //               first_name: firstName,
+  //               last_name: lastName,
+  //               phone_number: phoneNumber,
+  //               email: email,
+  //               password: registerPassword,
+  //             }),
+  //       }
+  //     );
+
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! status: ${response.status}`);
+  //     }
+
+  //     const data = await response.json();
+
+  //     if (data.status === "repeat") {
+  //       setErrorMessage(data.message); // Set dynamic error message
+  //     } else if (data) {
+  //       // If successful login or signup, store data in localStorage and navigate
+  //       localStorage.setItem("id", data.data[0].id);
+  //       localStorage.setItem("firstName", data.data[0].first_name);
+  //       localStorage.setItem("lastName", data.data[0].last_name);
+  //       localStorage.setItem("email", data.data[0].email);
+  //       localStorage.setItem("phoneNumber", data.data[0].phone_number);
+  //       localStorage.setItem("role", role);
+  //       if (data.data[0].driver_id)
+  //         localStorage.setItem("driverId", data.data[0].driver_id);
+  //       if (role === "passenger") navigate("/dashboard/passenger");
+  //       else if (role === "driver") navigate("/dashboard/driver");
+  //       else navigate("/dashboard/manager");
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //     setErrorMessage("Your login data is incorrect. Try again!");
+  //   }
+  // };
   const handleLogin = async (e) => {
-    setNotSameError("Your password and its repeat are the same !!")
     e.preventDefault();
+    setErrorMessage(""); // Reset error message on new submission
+    setNotSameError(""); // Reset password mismatch message
+
+    if (!isRegistered && registerPassword !== reWritePassword) {
+      setNotSameError("Your password and its repeat do not match!");
+      return;
+    }
+
     try {
       const response = await fetch(
         "https://dignitylimo.com/users/requests.php",
@@ -47,32 +174,37 @@ const Login = () => {
               }),
         }
       );
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      if (response.ok) {
-        const data = await response.json();
-        if (data) {
-          console.log("Login Data:", data.data[0]);
-          localStorage.setItem("id", data.data[0].id);
-          localStorage.setItem("firstName", data.data[0].first_name);
-          localStorage.setItem("lastName", data.data[0].last_name);
-          localStorage.setItem("email", data.data[0].email);
-          localStorage.setItem("phoneNumber", data.data[0].phone_number);
-          localStorage.setItem("phoneNumber", data.data[0].phone_number);
-          localStorage.setItem("role", role);
-          if (data.data[0].driver_id)
-            localStorage.setItem("driverId", data.data[0].driver_id);
-          if (role === "passenger") navigate("/dashboard/passenger");
-          else if (role === "driver") navigate("/dashboard/driver");
-          else navigate("/dashboard/manager");
-        }
+
+      const data = await response.json();
+
+      if (data.status === "repeat") {
+        setErrorMessage(data.message); // Display error message from API
+        setIsRegistered(true); // Set `isRegistered` to true if user already exists
+      } else if (data) {
+        // If successful login or signup, store data in localStorage and navigate
+        localStorage.setItem("id", data.data[0].id);
+        localStorage.setItem("firstName", data.data[0].first_name);
+        localStorage.setItem("lastName", data.data[0].last_name);
+        localStorage.setItem("email", data.data[0].email);
+        localStorage.setItem("phoneNumber", data.data[0].phone_number);
+        localStorage.setItem("role", role);
+        if (data.data[0].driver_id)
+          localStorage.setItem("driverId", data.data[0].driver_id);
+        if (role === "passenger") navigate("/dashboard/passenger");
+        else if (role === "driver") navigate("/dashboard/driver");
+        else navigate("/dashboard/manager");
       }
     } catch (error) {
-      console.log("user or password is incorrect");
-      setErrorMessage("Your Login data incorrect , Try again !");
+      console.error(error);
+      setErrorMessage("Your login data is incorrect. Try again!");
     }
   };
+
+
   const handleChangeFormType = () => setIsRegistered(!isRegistered);
 
   return (
