@@ -182,8 +182,11 @@ const Login = () => {
       const data = await response.json();
 
       if (data.status === "repeat") {
-        setErrorMessage(data.message); // Display error message from API
-        setIsRegistered(true); // Set `isRegistered` to true if user already exists
+        setErrorMessage(data.message);
+        setIsRegistered(true);
+      } else if (data.status === "success") {
+        // setErrorMessage(data.message);
+        setIsRegistered(true);
       } else if (data) {
         // If successful login or signup, store data in localStorage and navigate
         localStorage.setItem("id", data.data[0].id);
@@ -203,7 +206,6 @@ const Login = () => {
       setErrorMessage("Your login data is incorrect. Try again!");
     }
   };
-
 
   const handleChangeFormType = () => setIsRegistered(!isRegistered);
 
