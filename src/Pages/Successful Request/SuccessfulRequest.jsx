@@ -8,12 +8,12 @@ const SuccessfulRequest = () => {
   const name = `${firstName} ${lastName}`;
   const navigate = useNavigate();
   return (
-    <div class="bg-red-500 min-h-screen flex items-center">
-      <div class="w-full">
-        <h2 class="text-center text-white font-bold text-2xl uppercase mb-10">
+    <div className="bg-red-500 min-h-screen flex items-center">
+      <div className="w-full">
+        <h2 className="text-center text-white font-bold text-2xl uppercase mb-10">
           Congratulations !!!!!!!!!!!!!
         </h2>
-        <div class="bg-white p-10 rounded-lg shadow md:w-3/4 mx-auto lg:w-1/2">
+        <div className="bg-white p-10 rounded-lg shadow md:w-3/4 mx-auto lg:w-1/2">
           <h1 className="text-red-500 text-xl border-b-2 border-red-500 pb-4 mb-4 ">
             Dear {name}
           </h1>
@@ -27,7 +27,7 @@ const SuccessfulRequest = () => {
           </p>
           <div className="flex justify-end">
             <button
-              class=" bg-red-500 text-white font-bold py-2 px-4 rounded-lg"
+              className=" bg-red-500 text-white font-bold py-2 px-4 rounded-lg"
               onClick={() => {
                 navigate("/dashboard/passenger");
               }}

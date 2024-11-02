@@ -24,8 +24,9 @@ const ServiceRequest = () => {
     googleMapsApiKey: process.env.REACT_APP_GOOGLEMAPS_API_KEY,
     libraries: ["places"],
   });
-  console.log("Google Auto Compelete is Working ?! :", isLoaded);
+  console.log("Google Auto Complete is Working ?! :", isLoaded);
   console.log("API-Key:", process.env.REACT_APP_GOOGLEMAPS_API_KEY);
+
   const firstName = localStorage.getItem("firstName");
   const lastName = localStorage.getItem("lastName");
   const email = localStorage.getItem("email");
@@ -57,99 +58,50 @@ const ServiceRequest = () => {
           }),
         }
       );
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem("requestNumber", data.data[0]);
-      }
+      // if (!response.ok) {
+      //   throw new Error(`HTTP error! status: ${response.status}`);
+      // }
+      const data = await response.json();
+      console.log("DATA:", data)
+      localStorage.setItem("requestNumber", data.data[0]);
+      window.location.replace("successful-request");
     } catch (error) {
-      console.log("user or password is incorrect");
+      console.error("Error:", error);
     }
-    // navigate("dashboard/passenger/successful-request", { replace: true });
-    window.location.replace("successful-request");
   };
+
   const handleOriginOnPlacesChanged = () => {
-    let originAddress = originRef.current.getPlaces();
-    console.log("originAddress", originAddress);
+    const originAddress = originRef.current.getPlaces();
+    if (originAddress && originAddress.length > 0) {
+      const formattedOrigin = originAddress[0].formatted_address;
+      setOrigin(formattedOrigin);
+      console.log("Origin Address:", formattedOrigin);
+    }
   };
+
   const handleDestinationOnPlacesChanged = () => {
-    let destinationAddress = destinationRef.current.getPlaces();
-    console.log("destinationAddress", destinationAddress);
+    const destinationAddress = destinationRef.current.getPlaces();
+    if (destinationAddress && destinationAddress.length > 0) {
+      const formattedDestination = destinationAddress[0].formatted_address;
+      setDestination(formattedDestination);
+      console.log("Destination Address:", formattedDestination);
+    }
   };
+
   return (
     <div>
-      {/* <div class="bg-red-800 min-h-screen flex items-center">
-        <div class="w-full">
-          <h2 class="text-center text-white font-bold text-2xl uppercase mb-10">
+      <div className="bg-red-500 min-h-screen flex items-center">
+        <div className="w-full">
+          <h2 className="text-center text-white font-bold text-2xl uppercase mb-10">
             Fill out our form
           </h2>
-          <div class="bg-white p-10 rounded-lg shadow md:w-3/4 mx-auto lg:w-1/2">
-            <form action="">
-              <div class="mb-3">
-                <label for="name" class="block mb-2 font-bold text-gray-600">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  placeholder="Put in your fullname."
-                  class="border border-gray-300 shadow p-3 w-full rounded mb-1"
-                />
-              </div>
-
-              <div class="mb-3">
-                <label for="email" class="block mb-2 font-bold text-gray-600">
-                  Email
-                </label>
-                <input
-                  type="text"
-                  id="email"
-                  name="email"
-                  placeholder="Put in your Email."
-                  class="border border-red-300 shadow p-3 w-full rounded mb-1"
-                />
-                <p class="text-sm text-red-400 mt-2">This field is required</p>
-              </div>
-
-              <div class="mb-3">
-                <label
-                  for="phoneNumber"
-                  class="block mb-2 font-bold text-gray-600"
-                >
-                  Phone Number
-                </label>
-                <input
-                  type="text"
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  placeholder="Put in your phoneNumber."
-                  class="border border-red-300 shadow p-3 w-full rounded mb-1"
-                />
-                <p class="text-sm text-red-400 mt-2">This field is required</p>
-              </div>
-
-              <button class="block w-full bg-red-500 text-white font-bold p-4 rounded-lg">
-                Next
-              </button>
-            </form>
-          </div>
-        </div>
-      </div> */}
-      <div class="bg-red-500 min-h-screen flex items-center">
-        <div class="w-full">
-          <h2 class="text-center text-white font-bold text-2xl uppercase mb-10">
-            Fill out our form
-          </h2>
-          <div class="bg-white p-10 rounded-lg shadow md:w-3/4 mx-auto lg:w-1/2">
+          <div className="bg-white p-10 rounded-lg shadow md:w-3/4 mx-auto lg:w-1/2">
             <form action="">
               {isLoaded ? (
-                <div class="mb-2">
+                <div className="mb-2">
                   <label
-                    for="origin"
-                    class="block mb-2 font-bold text-gray-600"
+                    htmlFor="origin"
+                    className="block mb-2 font-bold text-gray-600"
                   >
                     Origin
                   </label>
@@ -162,8 +114,7 @@ const ServiceRequest = () => {
                       id="origin"
                       name="origin"
                       placeholder="Put in your Origin."
-                      class="border border-gray-300 shadow p-3 w-full rounded mb-1"
-                      onChange={(e) => setOrigin(e.target.value)}
+                      className="border border-gray-300 shadow p-3 w-full rounded mb-1"
                     />
                   </StandaloneSearchBox>
                 </div>
@@ -173,10 +124,10 @@ const ServiceRequest = () => {
                 </h1>
               )}
               {isLoaded ? (
-                <div class="mb-2">
+                <div className="mb-2">
                   <label
-                    for="destination"
-                    class="block mb-2 font-bold text-gray-600"
+                    htmlFor="destination"
+                    className="block mb-2 font-bold text-gray-600"
                   >
                     Destination
                   </label>
@@ -189,8 +140,7 @@ const ServiceRequest = () => {
                       id="destination"
                       name="destination"
                       placeholder="Put in your Destination."
-                      class="border border-gray-300 shadow p-3 w-full rounded mb-1"
-                      onChange={(e) => setDestination(e.target.value)}
+                      className="border border-gray-300 shadow p-3 w-full rounded mb-1"
                     />
                   </StandaloneSearchBox>
                 </div>
@@ -200,8 +150,8 @@ const ServiceRequest = () => {
                 </h1>
               )}
 
-              <div class="mb-2">
-                <label for="date" class="block mb-2 font-bold text-gray-600">
+              <div className="mb-2">
+                <label htmlFor="date" className="block mb-2 font-bold text-gray-600">
                   Date
                 </label>
                 <DatePicker
@@ -211,8 +161,8 @@ const ServiceRequest = () => {
                   onChange={(date, dateString) => setDateOfTrip(dateString)}
                 />
               </div>
-              <div class="mb-2">
-                <label for="time" class="block mb-2 font-bold text-gray-600">
+              <div className="mb-2">
+                <label htmlFor="time" className="block mb-2 font-bold text-gray-600">
                   Time
                 </label>
                 <TimePicker
@@ -225,8 +175,8 @@ const ServiceRequest = () => {
               </div>
 
               <label
-                for="passengerNumber"
-                class="block w-full bg-red-500 text-white text-center font-bold p-4 rounded-lg"
+                htmlFor="passengerNumber"
+                className="block w-full bg-red-500 text-white text-center font-bold p-4 rounded-lg"
               >
                 Next
               </label>
@@ -234,17 +184,17 @@ const ServiceRequest = () => {
           </div>
         </div>
       </div>
-      <div class="bg-black min-h-screen flex items-center">
-        <div class="w-full">
-          <h2 class="text-center text-white font-bold text-2xl uppercase mb-10">
+      <div className="bg-black min-h-screen flex items-center">
+        <div className="w-full">
+          <h2 className="text-center text-white font-bold text-2xl uppercase mb-10">
             Submit the Form
           </h2>
-          <div class="bg-white p-10 rounded-lg shadow md:w-3/4 mx-auto lg:w-1/2">
+          <div className="bg-white p-10 rounded-lg shadow md:w-3/4 mx-auto lg:w-1/2">
             <form action="">
-              <div class="mb-2">
+              <div className="mb-2">
                 <label
-                  for="passengerNumber"
-                  class="block mb-2 font-bold text-gray-600"
+                  htmlFor="passengerNumber"
+                  className="block mb-2 font-bold text-gray-600"
                 >
                   Passenger Number
                 </label>
@@ -253,14 +203,14 @@ const ServiceRequest = () => {
                   id="passengerNumber"
                   name="passengerNumber"
                   placeholder="Put in your Passenger Number."
-                  class="border border-gray-300 shadow p-3 w-full rounded mb-1"
+                  className="border border-gray-300 shadow p-3 w-full rounded mb-1"
                   onChange={(e) => setNumberOfPassengers(e.target.value)}
                 />
               </div>
-              <div class="mb-2">
+              <div className="mb-2">
                 <label
-                  for="baggageNumber"
-                  class="block mb-2 font-bold text-gray-600"
+                  htmlFor="baggageNumber"
+                  className="block mb-2 font-bold text-gray-600"
                 >
                   Baggage Number
                 </label>
@@ -269,14 +219,14 @@ const ServiceRequest = () => {
                   id="baggageNumber"
                   name="baggageNumber"
                   placeholder="Put in your Baggage Number."
-                  class="border border-gray-300 shadow p-3 w-full rounded mb-1"
+                  className="border border-gray-300 shadow p-3 w-full rounded mb-1"
                   onChange={(e) => setNumberOfPassengerBags(e.target.value)}
                 />
               </div>
-              <div class="mb-2">
+              <div className="mb-2">
                 <label
-                  for="additionalRequest"
-                  class="block mb-2 font-bold text-gray-600"
+                  htmlFor="additionalRequest"
+                  className="block mb-2 font-bold text-gray-600"
                 >
                   Additional Request
                 </label>
@@ -284,14 +234,14 @@ const ServiceRequest = () => {
                   id="additionalRequest"
                   name="additionalRequest"
                   placeholder="Put in your Additional Request."
-                  class="border border-gray-300 shadow p-3 w-full rounded mb-1"
+                  className="border border-gray-300 shadow p-3 w-full rounded mb-1"
                   onChange={(e) => setDescription(e.target.value)}
                 />
               </div>
               <div className="mb-2">
                 <label
-                  for="luxuryService"
-                  class="block mb-2 font-bold text-gray-600"
+                  htmlFor="luxuryService"
+                  className="block mb-2 font-bold text-gray-600"
                 >
                   Luxury Service
                 </label>
@@ -308,10 +258,10 @@ const ServiceRequest = () => {
               </div>
 
               <button
-                class="block w-full bg-red-500 text-white font-bold p-4 rounded-lg"
+                className="w-full bg-red-500 text-white font-bold py-4 rounded-lg"
                 onClick={handleServiceRequset}
               >
-                Submit
+                Submit Form
               </button>
             </form>
           </div>
