@@ -154,6 +154,9 @@ const TripsHistory = () => {
                 Luxury Service : {record.trip_luxury_service}
               </p>
               <p className="border-2 p-2 rounded-md border-gray-400 my-2">
+                Driver ID : {record.driver_id}
+              </p>
+              <p className="border-2 p-2 rounded-md border-gray-400 my-2">
                 Description : {record.trip_description}
               </p>
             </Modal>
